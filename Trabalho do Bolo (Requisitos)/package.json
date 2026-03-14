@@ -1,0 +1,14 @@
+{
+  "name": "bolo-entrega-rapida",
+  "version": "1.0.0",
+  "description": "Sistema de pedidos de bolos com backend compartilhado",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "express": "^4.21.2"
+  }
+}
