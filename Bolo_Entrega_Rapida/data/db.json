@@ -1,0 +1,24 @@
+{
+  "users": [
+    {
+      "id": "058efae9-3621-4664-9f45-e1860040aca0",
+      "tipo": "cliente",
+      "nome": "Confeiteiro1",
+      "email": "Confeiteiro1@gmail.com",
+      "telefone": "(71) 99657-9548",
+      "senha": "$2a$10$HVA47ecTGfFV6x/pEPwYpev/1IhJUXwV6J40E.Rb5/ls2gq9EGzrW",
+      "criadoEm": "2026-03-13T23:26:22.088Z"
+    },
+
+    {
+      "id": "d71a1a55-ed99-437f-b168-41279a7258c4",
+      "tipo": "confeiteiro",
+      "nome": "Cliente1",
+      "email": "Cliente1@gmail.com",
+      "telefone": "(71) 99657-9548",
+      "senha": "$2a$10$lQJnawr0tmyVGO7d5DT/QeiSECE4tqoj8jGUR07gUz8UZt1FNvtwq",
+      "criadoEm": "2026-03-13T23:27:24.699Z"
+    }
+  ],
+  "pedidos": []
+}

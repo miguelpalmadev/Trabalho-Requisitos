@@ -1,0 +1,266 @@
+:root {
+  --bg: #f7f3ef;
+  --card: rgba(255, 255, 255, 0.92);
+  --text: #332924;
+  --muted: #8f847b;
+  --line: #e7ddd5;
+  --input-bg: #fbf8f5;
+  --accent-1: #cc5b71;
+  --accent-2: #df8b3b;
+  --danger: #cf4b57;
+  --success: #4d9d62;
+  --shadow: 0 12px 28px rgba(82, 56, 38, 0.08);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: clamp(14px, 0.75vw, 16px);
+}
+
+body {
+  font-family: Inter, sans-serif;
+  color: var(--text);
+  background:
+    radial-gradient(circle at top left, rgba(204, 91, 113, 0.08), transparent 22%),
+    radial-gradient(circle at bottom right, rgba(223, 139, 59, 0.08), transparent 24%),
+    linear-gradient(135deg, #f8f4f1 0%, #f3efeb 45%, #f7f1ed 100%);
+}
+
+.topbar {
+  width: 100%;
+  background: rgba(255,255,255,.85);
+  backdrop-filter: blur(6px);
+  border-bottom: 1px solid #eee3db;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: clamp(12px, 1.2vw, 18px) clamp(14px, 2vw, 28px);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.brand-icon {
+  width: clamp(34px, 2.4vw, 40px);
+  height: clamp(34px, 2.4vw, 40px);
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+  color: #fff;
+  font-size: clamp(1rem, 1.2vw, 1.15rem);
+}
+
+.brand h1 {
+  font-size: clamp(1rem, 1.2vw, 1.2rem);
+}
+
+.brand span {
+  font-size: clamp(.78rem, .85vw, .88rem);
+  color: var(--muted);
+}
+
+.logout-btn,
+.primary-btn {
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(90deg, var(--accent-1), var(--accent-2));
+  color: #fff;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.logout-btn {
+  padding: 10px 16px;
+}
+
+.primary-btn {
+  padding: 12px 18px;
+}
+
+.small-btn {
+  padding: 10px 14px;
+}
+
+.page {
+  width: min(1400px, calc(100% - 32px));
+  margin: clamp(16px, 2vw, 28px) auto;
+  display: grid;
+  gap: clamp(14px, 1.4vw, 20px);
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow);
+  border-radius: 18px;
+  padding: clamp(16px, 1.5vw, 22px);
+  backdrop-filter: blur(5px);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.card-header h2 {
+  font-size: clamp(1.05rem, 1.2vw, 1.28rem);
+}
+
+.pedido-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 14px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  grid-column: span 4;
+}
+
+.field-full {
+  grid-column: 1 / -1;
+}
+
+label {
+  font-size: clamp(.86rem, .9vw, .95rem);
+  font-weight: 600;
+}
+
+input,
+select {
+  width: 100%;
+  height: clamp(42px, 3vw, 46px);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--input-bg);
+  padding: 0 12px;
+  font-size: clamp(.88rem, .95vw, .96rem);
+}
+
+.result-box input {
+  font-weight: 700;
+}
+
+.message {
+  margin-top: 14px;
+  font-size: .95rem;
+  color: var(--danger);
+}
+
+.table-wrap {
+  overflow-x: auto;
+  width: 100%;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 860px;
+}
+
+th,
+td {
+  padding: 12px 10px;
+  border-bottom: 1px solid #eee4dc;
+  text-align: left;
+  font-size: .92rem;
+  white-space: nowrap;
+}
+
+thead th {
+  background: #efe7df;
+}
+
+.recibo-box {
+  background: #f8f4f0;
+  border-radius: 14px;
+  padding: clamp(16px, 1.5vw, 20px);
+  line-height: 1.8;
+  min-height: 160px;
+  overflow-wrap: break-word;
+}
+
+.recibo-box ul {
+  padding-left: 18px;
+}
+
+.status-pendente {
+  color: #b36b13;
+  font-weight: 700;
+}
+
+.status-concluido {
+  color: var(--success);
+  font-weight: 700;
+}
+
+@media (max-width: 1100px) {
+  .field {
+    grid-column: span 6;
+  }
+}
+
+@media (max-width: 700px) {
+  .topbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .brand {
+    justify-content: flex-start;
+  }
+
+  .field {
+    grid-column: 1 / -1;
+  }
+
+  .card-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .page {
+    width: calc(100% - 20px);
+  }
+}
+
+@media (max-width: 420px) {
+  .page {
+    width: calc(100% - 16px);
+  }
+
+  .card {
+    border-radius: 14px;
+    padding: 14px;
+  }
+
+  .logout-btn,
+  .primary-btn,
+  .small-btn {
+    width: 100%;
+  }
+}
+
+@media (min-width: 1600px) {
+  .page {
+    width: min(1500px, calc(100% - 80px));
+  }
+}
