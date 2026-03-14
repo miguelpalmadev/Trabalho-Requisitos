@@ -34,10 +34,13 @@ function preencherUsuario(user) {
 function configurarCalculos() {
   const altura = document.getElementById("altura");
   const comprimento = document.getElementById("comprimento");
+  const sinal = document.getElementById("sinal");
 
   [altura, comprimento].forEach((input) => {
     input.addEventListener("input", calcularValores);
   });
+
+  sinal.addEventListener("input", validarSinalMinimo);
 }
 
 function calcularValores() {
@@ -46,11 +49,58 @@ function calcularValores() {
 
   const area = altura * comprimento;
   const total = area * PRECO_METRO;
-  const sinal = total * 0.5;
+  const sinalMinimo = total * 0.5;
 
   document.getElementById("area").value = area > 0 ? `${area.toFixed(2)} m²` : "";
   document.getElementById("valorTotal").value = total > 0 ? formatMoney(total) : "";
-  document.getElementById("sinal").value = sinal > 0 ? formatMoney(sinal) : "";
+
+  const sinalInput = document.getElementById("sinal");
+  const hint = document.getElementById("sinalHint");
+
+  if (total > 0) {
+    sinalInput.min = sinalMinimo.toFixed(2);
+
+    if (!sinalInput.value || parseFloat(sinalInput.value) < sinalMinimo) {
+      sinalInput.value = sinalMinimo.toFixed(2);
+    }
+
+    hint.textContent = `Mínimo permitido: ${formatMoney(sinalMinimo)}`;
+  } else {
+    sinalInput.value = "";
+    sinalInput.min = "0";
+    hint.textContent = "";
+  }
+
+  validarSinalMinimo();
+}
+
+function validarSinalMinimo() {
+  const altura = parseFloat(document.getElementById("altura").value) || 0;
+  const comprimento = parseFloat(document.getElementById("comprimento").value) || 0;
+  const sinalInput = document.getElementById("sinal");
+  const msg = document.getElementById("pedidoMensagem");
+
+  const area = altura * comprimento;
+  const valorTotal = area * PRECO_METRO;
+  const sinalMinimo = valorTotal * 0.5;
+  const sinalInformado = parseFloat(sinalInput.value) || 0;
+
+  if (!valorTotal || !sinalInput.value) {
+    sinalInput.setCustomValidity("");
+    msg.textContent = "";
+    return;
+  }
+
+  if (sinalInformado < sinalMinimo) {
+    sinalInput.setCustomValidity("O sinal deve ser no mínimo 50% do valor total.");
+    msg.style.color = "#c0392b";
+    msg.textContent = `O sinal deve ser no mínimo ${formatMoney(sinalMinimo)}.`;
+  } else {
+    sinalInput.setCustomValidity("");
+    if (msg.textContent.includes("mínimo")) {
+      msg.textContent = "";
+    }
+  }
 }
 
 function configurarPedido() {
@@ -68,8 +118,9 @@ function configurarPedido() {
     const formato = document.getElementById("formato").value;
     const sabor = document.getElementById("sabor").value;
     const recheio = document.getElementById("recheio").value;
+    const sinal = parseFloat(document.getElementById("sinal").value) || 0;
 
-    if (!dataEntrega || !altura || !comprimento || !formato || !sabor || !recheio) {
+    if (!dataEntrega || !altura || !comprimento || !formato || !sabor || !recheio || !sinal) {
       msg.style.color = "#c0392b";
       msg.textContent = "Preencha todos os campos do pedido.";
       return;
@@ -77,7 +128,19 @@ function configurarPedido() {
 
     const area = altura * comprimento;
     const valorTotal = area * PRECO_METRO;
-    const sinal = valorTotal * 0.5;
+    const sinalMinimo = valorTotal * 0.5;
+
+    if (sinal < sinalMinimo) {
+      msg.style.color = "#c0392b";
+      msg.textContent = `O sinal deve ser no mínimo ${formatMoney(sinalMinimo)}.`;
+      return;
+    }
+
+    if (sinal > valorTotal) {
+      msg.style.color = "#c0392b";
+      msg.textContent = "O sinal não pode ser maior que o valor total.";
+      return;
+    }
 
     try {
       const { pedido, message } = await API.criarPedido({
@@ -99,7 +162,8 @@ function configurarPedido() {
       document.getElementById("clienteNome").value = user.nome;
       document.getElementById("area").value = `${area.toFixed(2)} m²`;
       document.getElementById("valorTotal").value = formatMoney(valorTotal);
-      document.getElementById("sinal").value = formatMoney(sinal);
+      document.getElementById("sinal").value = sinal.toFixed(2);
+      document.getElementById("sinalHint").textContent = `Mínimo permitido: ${formatMoney(sinalMinimo)}`;
 
       ultimoRecibo = pedido;
       msg.style.color = "#4d9d62";
@@ -120,9 +184,8 @@ async function renderMeusPedidos() {
 
   try {
     const pedidos = await API.listarPedidos({ userId: user.id, tipo: "cliente" });
-    const pedidosAtivos = pedidos.filter((pedido) => pedido.status !== "concluido");
 
-    if (!pedidosAtivos.length) {
+    if (!pedidos.length) {
       tbody.innerHTML = `
         <tr>
           <td colspan="9">Nenhum pedido encontrado.</td>
@@ -131,27 +194,30 @@ async function renderMeusPedidos() {
       return;
     }
 
-    tbody.innerHTML = pedidosAtivos
-      .map(
-        (pedido, index) => `
-        <tr data-id="${pedido.id}">
-          <td>#${index + 1}</td>
-          <td>${formatDateBR(pedido.dataEntrega)}</td>
-          <td>${pedido.area.toFixed(2)} m²</td>
-          <td>${pedido.formato}</td>
-          <td>${pedido.sabor}</td>
-          <td>${pedido.recheio}</td>
-          <td>${formatMoney(pedido.sinal)}</td>
-          <td>${formatMoney(pedido.valorTotal)}</td>
-          <td class="status-pendente">${capitalize(pedido.status)}</td>
-        </tr>
-      `
-      )
+    tbody.innerHTML = pedidos
+      .map((pedido, index) => {
+        const statusClasse =
+          pedido.status === "concluido" ? "status-concluido" : "status-pendente";
+
+        return `
+          <tr data-id="${pedido.id}">
+            <td>#${index + 1}</td>
+            <td>${formatDateBR(pedido.dataEntrega)}</td>
+            <td>${pedido.area.toFixed(2)} m²</td>
+            <td>${pedido.formato}</td>
+            <td>${pedido.sabor}</td>
+            <td>${pedido.recheio}</td>
+            <td>${formatMoney(pedido.sinal)}</td>
+            <td>${formatMoney(pedido.valorTotal)}</td>
+            <td class="${statusClasse}">${capitalize(pedido.status)}</td>
+          </tr>
+        `;
+      })
       .join("");
 
     tbody.querySelectorAll("tr[data-id]").forEach((row) => {
       row.addEventListener("click", () => {
-        const pedido = pedidosAtivos.find((p) => p.id === row.dataset.id);
+        const pedido = pedidos.find((p) => p.id === row.dataset.id);
         if (pedido) {
           ultimoRecibo = pedido;
           renderRecibo(pedido);
