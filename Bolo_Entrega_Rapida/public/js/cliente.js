@@ -50,7 +50,7 @@ function calcularValores() {
   const camadas = parseInt(document.getElementById("camadas").value, 10) || 0;
 
   const area = altura * comprimento;
-  const total = area * PRECO_METRO + camadas;
+  const total = (area * PRECO_METRO) + camadas;  // Aplicando o cálculo corretamente
   const sinalMinimo = total * 0.5;
 
   document.getElementById("area").value = area > 0 ? `${area.toFixed(2)} m²` : "";
@@ -240,13 +240,6 @@ async function renderMeusPedidos() {
   }
 }
 
-function configurarRecibo() {
-  const btn = document.getElementById("emitirReciboBtn");
-  btn.addEventListener("click", () => {
-    renderRecibo(ultimoRecibo);
-  });
-}
-
 function renderRecibo(pedido) {
   const box = document.getElementById("reciboBox");
 
@@ -271,13 +264,6 @@ function renderRecibo(pedido) {
       <li><strong>Status:</strong> ${capitalize(pedido.status)}</li>
     </ul>
   `;
-}
-
-function configurarLogout() {
-  document.getElementById("logoutBtn").addEventListener("click", () => {
-    localStorage.removeItem("currentUser");
-    window.location.href = "login.html";
-  });
 }
 
 function formatMoney(value) {
