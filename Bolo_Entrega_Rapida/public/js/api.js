@@ -36,10 +36,20 @@ const API = {
     return this.request(`/api/pedidos${query ? `?${query}` : ''}`);
   },
 
-  criarPedido(payload) {
+  async criarPedido(payload) {
+    // Calcular o valor total com base na área e número de camadas
+    const { area, camadas } = payload;
+    const valorTotal = (area * 51.4) + camadas;
+
+    // Incluir o valor total no payload antes de enviar para a API
+    const pedido = {
+      ...payload,
+      valorTotal,
+    };
+
     return this.request('/api/pedidos', {
       method: 'POST',
-      body: JSON.stringify(payload)
+      body: JSON.stringify(pedido)
     });
   },
 

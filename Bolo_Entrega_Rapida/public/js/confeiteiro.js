@@ -31,7 +31,7 @@ async function carregarTela() {
   } catch (error) {
     document.getElementById("pedidosBody").innerHTML = `
       <tr>
-        <td colspan="10">Erro ao carregar pedidos.</td>
+        <td colspan="11">Erro ao carregar pedidos.</td>
       </tr>
     `;
   }
@@ -48,7 +48,7 @@ function renderPedidos() {
   if (!pedidos.length) {
     tbody.innerHTML = `
       <tr>
-        <td colspan="10">Nenhum pedido encontrado.</td>
+        <td colspan="11">Nenhum pedido encontrado.</td>
       </tr>
     `;
     renderReciboConfeiteiro(null);
@@ -62,6 +62,7 @@ function renderPedidos() {
         <td>#${index + 1}</td>
         <td>${pedido.cliente}</td>
         <td>${pedido.area.toFixed(2)} m²</td>
+        <td>${pedido.camadas || 0}</td>
         <td>${pedido.formato}</td>
         <td>${pedido.sabor}</td>
         <td>${pedido.recheio}</td>
@@ -193,6 +194,7 @@ function renderReciboConfeiteiro(pedido) {
       <li><strong>Altura:</strong> ${pedido.altura} m</li>
       <li><strong>Comprimento:</strong> ${pedido.comprimento} m</li>
       <li><strong>Área do bolo:</strong> ${pedido.area.toFixed(2)} m²</li>
+      <li><strong>Número de camadas:</strong> ${pedido.camadas || 0}</li>
       <li><strong>Formato:</strong> ${pedido.formato}</li>
       <li><strong>Sabor da massa:</strong> ${pedido.sabor}</li>
       <li><strong>Recheio:</strong> ${pedido.recheio}</li>
