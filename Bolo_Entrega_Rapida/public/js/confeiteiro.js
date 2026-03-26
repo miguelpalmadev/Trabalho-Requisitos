@@ -20,7 +20,7 @@ function protegerTelaConfeiteiro() {
 async function carregarTela() {
   try {
     pedidosCache = await API.listarPedidos();
-    renderCalendar(currentMonth, currentYear);
+    renderCalendar(currentMonth, currentYear);  // Garantindo que a função de renderização do calendário seja chamada corretamente
     renderPedidos();
   } catch (error) {
     document.getElementById("pedidosBody").innerHTML = `
@@ -31,8 +31,44 @@ async function carregarTela() {
   }
 }
 
-function getPedidosAtivos() {
-  return pedidosCache.filter((pedido) => pedido.status !== "concluido");
+function renderCalendar(month, year) {
+  const calendar = document.getElementById("calendar");
+  const monthLabel = document.getElementById("monthLabel");
+
+  const monthNames = [
+    "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
+    "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
+  ];
+
+  const dayNames = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
+
+  monthLabel.textContent = `${monthNames[month]} de ${year}`;
+
+  const firstDay = new Date(year, month, 1).getDay();
+  const totalDays = new Date(year, month + 1, 0).getDate();
+  const pedidos = getPedidosAtivos();
+
+  let html = dayNames.map((day) => `<div class="day-name">${day}</div>`).join("");
+
+  for (let i = 0; i < firstDay; i++) {
+    html += `<div class="day-cell empty"></div>`;
+  }
+
+  for (let day = 1; day <= totalDays; day++) {
+    const date = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+    const totalPedidosDia = pedidos.filter((pedido) => pedido.dataEntrega === date).length;
+    const isFull = totalPedidosDia >= 4;  // Limite de pedidos por dia
+
+    html += `
+      <div class="day-cell ${isFull ? "full" : ""}">
+        <div class="day-number">${day}</div>
+        <div class="day-info">${totalPedidosDia} pedido(s)</div>
+        <div class="day-info">${isFull ? "Lotado" : "Disponível"}</div>
+      </div>
+    `;
+  }
+
+  calendar.innerHTML = html;
 }
 
 function renderPedidos() {
@@ -56,7 +92,7 @@ function renderPedidos() {
         <td>#${index + 1}</td>
         <td>${pedido.cliente}</td>
         <td>${pedido.area.toFixed(2)} m²</td>
-        <td>${pedido.camadas || 0}</td>  <!-- Corrigido: agora o número de camadas é exibido -->
+        <td>${pedido.camadas || 0}</td>  <!-- Correção: agora o número de camadas é exibido -->
         <td>${pedido.formato}</td>
         <td>${pedido.sabor}</td>
         <td>${pedido.recheio}</td>
@@ -99,7 +135,7 @@ async function concluirPedido(id) {
     }
 
     renderPedidos();
-    renderCalendar(currentMonth, currentYear);
+    renderCalendar(currentMonth, currentYear);  // Atualizando o calendário depois de concluir o pedido
   } catch (error) {
     alert(error.message);
   }

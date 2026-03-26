@@ -50,7 +50,7 @@ function calcularValores() {
   const camadas = parseInt(document.getElementById("camadas").value, 10) || 0;
 
   const area = altura * comprimento;
-  const total = (area * PRECO_METRO) + camadas;  // Aplicando o cálculo corretamente
+  const total = (area * PRECO_METRO) + camadas;
   const sinalMinimo = total * 0.5;
 
   document.getElementById("area").value = area > 0 ? `${area.toFixed(2)} m²` : "";
