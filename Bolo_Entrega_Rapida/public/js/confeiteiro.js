@@ -92,7 +92,6 @@ function renderPedidos() {
         <td>#${index + 1}</td>
         <td>${pedido.cliente}</td>
         <td>${pedido.area.toFixed(2)} m²</td>
-        <td>${pedido.camadas || 0}</td>  <!-- Correção: agora o número de camadas é exibido -->
         <td>${pedido.formato}</td>
         <td>${pedido.sabor}</td>
         <td>${pedido.recheio}</td>
@@ -157,7 +156,6 @@ function renderReciboConfeiteiro(pedido) {
       <li><strong>Altura:</strong> ${pedido.altura} m</li>
       <li><strong>Comprimento:</strong> ${pedido.comprimento} m</li>
       <li><strong>Área do bolo:</strong> ${pedido.area.toFixed(2)} m²</li>
-      <li><strong>Número de camadas:</strong> ${pedido.camadas || 0}</li> <!-- Adicionado: Exibindo o número de camadas -->
       <li><strong>Formato:</strong> ${pedido.formato}</li>
       <li><strong>Sabor da massa:</strong> ${pedido.sabor}</li>
       <li><strong>Recheio:</strong> ${pedido.recheio}</li>
