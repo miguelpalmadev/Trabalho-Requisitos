@@ -34,6 +34,7 @@ function preencherUsuario(user) {
 function configurarCalculos() {
   const altura = document.getElementById("altura");
   const comprimento = document.getElementById("comprimento");
+
   const sinal = document.getElementById("sinal");
 
   [altura, comprimento].forEach((input) => {
@@ -78,6 +79,7 @@ function calcularValores() {
 function validarSinalMinimo() {
   const altura = parseFloat(document.getElementById("altura").value) || 0;
   const comprimento = parseFloat(document.getElementById("comprimento").value) || 0;
+
   const sinalInput = document.getElementById("sinal");
   const msg = document.getElementById("pedidoMensagem");
 
@@ -164,6 +166,7 @@ function configurarPedido() {
       document.getElementById("clienteNome").value = user.nome;
       document.getElementById("area").value = `${area.toFixed(2)} m²`;
       document.getElementById("valorTotal").value = formatMoney(valorTotal);
+
       document.getElementById("sinal").value = sinal.toFixed(2);
       document.getElementById("sinalHint").textContent = `Mínimo permitido: ${formatMoney(sinalMinimo)}`;
 
@@ -206,6 +209,7 @@ async function renderMeusPedidos() {
             <td>#${index + 1}</td>
             <td>${formatDateBR(pedido.dataEntrega)}</td>
             <td>${pedido.area.toFixed(2)} m²</td>
+
             <td>${pedido.formato}</td>
             <td>${pedido.sabor}</td>
             <td>${pedido.recheio}</td>
@@ -257,6 +261,7 @@ function renderRecibo(pedido) {
       <li><strong>Altura:</strong> ${pedido.altura} m</li>
       <li><strong>Comprimento:</strong> ${pedido.comprimento} m</li>
       <li><strong>Área do bolo:</strong> ${pedido.area.toFixed(2)} m²</li>
+
       <li><strong>Formato:</strong> ${pedido.formato}</li>
       <li><strong>Sabor da massa:</strong> ${pedido.sabor}</li>
       <li><strong>Recheio:</strong> ${pedido.recheio}</li>

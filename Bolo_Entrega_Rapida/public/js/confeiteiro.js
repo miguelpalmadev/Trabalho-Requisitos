@@ -1,3 +1,9 @@
+const LIMITE_POR_DIA = 4;
+let currentMonth = new Date().getMonth();
+let currentYear = new Date().getFullYear();
+let ultimoReciboConfeiteiro = null;
+let pedidosCache = [];
+
 document.addEventListener("DOMContentLoaded", async () => {
   const user = protegerTelaConfeiteiro();
   if (!user) return;
@@ -20,7 +26,7 @@ function protegerTelaConfeiteiro() {
 async function carregarTela() {
   try {
     pedidosCache = await API.listarPedidos();
-    renderCalendar(currentMonth, currentYear);  // Garantindo que a função de renderização do calendário seja chamada corretamente
+    renderCalendar(currentMonth, currentYear);
     renderPedidos();
   } catch (error) {
     document.getElementById("pedidosBody").innerHTML = `
@@ -31,44 +37,8 @@ async function carregarTela() {
   }
 }
 
-function renderCalendar(month, year) {
-  const calendar = document.getElementById("calendar");
-  const monthLabel = document.getElementById("monthLabel");
-
-  const monthNames = [
-    "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
-    "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
-  ];
-
-  const dayNames = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
-
-  monthLabel.textContent = `${monthNames[month]} de ${year}`;
-
-  const firstDay = new Date(year, month, 1).getDay();
-  const totalDays = new Date(year, month + 1, 0).getDate();
-  const pedidos = getPedidosAtivos();
-
-  let html = dayNames.map((day) => `<div class="day-name">${day}</div>`).join("");
-
-  for (let i = 0; i < firstDay; i++) {
-    html += `<div class="day-cell empty"></div>`;
-  }
-
-  for (let day = 1; day <= totalDays; day++) {
-    const date = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
-    const totalPedidosDia = pedidos.filter((pedido) => pedido.dataEntrega === date).length;
-    const isFull = totalPedidosDia >= 4;  // Limite de pedidos por dia
-
-    html += `
-      <div class="day-cell ${isFull ? "full" : ""}">
-        <div class="day-number">${day}</div>
-        <div class="day-info">${totalPedidosDia} pedido(s)</div>
-        <div class="day-info">${isFull ? "Lotado" : "Disponível"}</div>
-      </div>
-    `;
-  }
-
-  calendar.innerHTML = html;
+function getPedidosAtivos() {
+  return pedidosCache.filter((pedido) => pedido.status !== "concluido");
 }
 
 function renderPedidos() {
@@ -92,6 +62,7 @@ function renderPedidos() {
         <td>#${index + 1}</td>
         <td>${pedido.cliente}</td>
         <td>${pedido.area.toFixed(2)} m²</td>
+
         <td>${pedido.formato}</td>
         <td>${pedido.sabor}</td>
         <td>${pedido.recheio}</td>
@@ -134,10 +105,77 @@ async function concluirPedido(id) {
     }
 
     renderPedidos();
-    renderCalendar(currentMonth, currentYear);  // Atualizando o calendário depois de concluir o pedido
+    renderCalendar(currentMonth, currentYear);
   } catch (error) {
     alert(error.message);
   }
+}
+
+function configurarNavegacaoCalendario() {
+  document.getElementById("prevMonth").addEventListener("click", () => {
+    currentMonth--;
+    if (currentMonth < 0) {
+      currentMonth = 11;
+      currentYear--;
+    }
+    renderCalendar(currentMonth, currentYear);
+  });
+
+  document.getElementById("nextMonth").addEventListener("click", () => {
+    currentMonth++;
+    if (currentMonth > 11) {
+      currentMonth = 0;
+      currentYear++;
+    }
+    renderCalendar(currentMonth, currentYear);
+  });
+}
+
+function renderCalendar(month, year) {
+  const calendar = document.getElementById("calendar");
+  const monthLabel = document.getElementById("monthLabel");
+
+  const monthNames = [
+    "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
+    "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
+  ];
+
+  const dayNames = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
+
+  monthLabel.textContent = `${monthNames[month]} de ${year}`;
+
+  const firstDay = new Date(year, month, 1).getDay();
+  const totalDays = new Date(year, month + 1, 0).getDate();
+  const pedidos = getPedidosAtivos();
+
+  let html = dayNames.map((day) => `<div class="day-name">${day}</div>`).join("");
+
+  for (let i = 0; i < firstDay; i++) {
+    html += `<div class="day-cell empty"></div>`;
+  }
+
+  for (let day = 1; day <= totalDays; day++) {
+    const date = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+    const totalPedidosDia = pedidos.filter((pedido) => pedido.dataEntrega === date).length;
+    const isFull = totalPedidosDia >= LIMITE_POR_DIA;
+
+    html += `
+      <div class="day-cell ${isFull ? "full" : ""}">
+        <div class="day-number">${day}</div>
+        <div class="day-info">${totalPedidosDia} pedido(s)</div>
+        <div class="day-info">${isFull ? "Lotado" : "Disponível"}</div>
+      </div>
+    `;
+  }
+
+  calendar.innerHTML = html;
+}
+
+function configurarReciboConfeiteiro() {
+  const btn = document.getElementById("emitirReciboConfeiteiroBtn");
+  btn.addEventListener("click", () => {
+    renderReciboConfeiteiro(ultimoReciboConfeiteiro || null);
+  });
 }
 
 function renderReciboConfeiteiro(pedido) {
@@ -156,6 +194,7 @@ function renderReciboConfeiteiro(pedido) {
       <li><strong>Altura:</strong> ${pedido.altura} m</li>
       <li><strong>Comprimento:</strong> ${pedido.comprimento} m</li>
       <li><strong>Área do bolo:</strong> ${pedido.area.toFixed(2)} m²</li>
+
       <li><strong>Formato:</strong> ${pedido.formato}</li>
       <li><strong>Sabor da massa:</strong> ${pedido.sabor}</li>
       <li><strong>Recheio:</strong> ${pedido.recheio}</li>
@@ -164,6 +203,13 @@ function renderReciboConfeiteiro(pedido) {
       <li><strong>Status:</strong> ${capitalize(pedido.status)}</li>
     </ul>
   `;
+}
+
+function configurarLogout() {
+  document.getElementById("logoutBtn").addEventListener("click", () => {
+    localStorage.removeItem("currentUser");
+    window.location.href = "login.html";
+  });
 }
 
 function formatMoney(value) {
