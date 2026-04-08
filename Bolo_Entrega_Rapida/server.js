@@ -115,7 +115,7 @@ app.post('/api/login', async (req, res) => {
 
     if (tipo && user.tipo !== tipo) {
       return res.status(400).json({
-        message: `Essa conta é do tipo "${user.tipo}". Selecione o tipo correto para entrar.`
+        message: `Essa conta é do tipo "${user.tipo}".`
       });
     }
 
@@ -155,6 +155,7 @@ app.post('/api/pedidos', (req, res) => {
       comprimento,
       area,
       formato,
+      camadas,
       sabor,
       recheio,
       sinal,
@@ -169,6 +170,7 @@ app.post('/api/pedidos', (req, res) => {
       !altura ||
       !comprimento ||
       !formato ||
+      !camadas ||
       !sabor ||
       !recheio
     ) {
@@ -176,13 +178,14 @@ app.post('/api/pedidos', (req, res) => {
     }
 
     const db = readDb();
+
     const pedidosAtivosNoDia = db.pedidos.filter(
       (pedido) => pedido.dataEntrega === dataEntrega && pedido.status !== 'concluido'
     );
 
     if (pedidosAtivosNoDia.length >= LIMITE_POR_DIA) {
       return res.status(409).json({
-        message: 'Esse dia está indisponível. Já existem 4 pedidos para esta data.'
+        message: 'Esse dia já está lotado (4 pedidos).'
       });
     }
 
@@ -196,6 +199,7 @@ app.post('/api/pedidos', (req, res) => {
       comprimento: Number(comprimento),
       area: Number(area),
       formato,
+      camadas: Number(camadas),
       sabor,
       recheio,
       sinal: Number(sinal),
@@ -208,7 +212,7 @@ app.post('/api/pedidos', (req, res) => {
     writeDb(db);
 
     return res.status(201).json({
-      message: 'Pedido realizado com sucesso!',
+      message: 'Pedido criado com sucesso!',
       pedido: novoPedido
     });
   } catch (error) {
@@ -220,7 +224,8 @@ app.patch('/api/pedidos/:id/concluir', (req, res) => {
   try {
     const { id } = req.params;
     const db = readDb();
-    const pedido = db.pedidos.find((item) => item.id === id);
+
+    const pedido = db.pedidos.find((p) => p.id === id);
 
     if (!pedido) {
       return res.status(404).json({ message: 'Pedido não encontrado.' });
@@ -228,10 +233,11 @@ app.patch('/api/pedidos/:id/concluir', (req, res) => {
 
     pedido.status = 'concluido';
     pedido.concluidoEm = new Date().toISOString();
+
     writeDb(db);
 
     return res.json({
-      message: 'Pedido concluído com sucesso!',
+      message: 'Pedido concluído!',
       pedido
     });
   } catch (error) {

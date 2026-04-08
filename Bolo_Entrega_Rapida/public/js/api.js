@@ -37,8 +37,8 @@ const API = {
   },
 
   async criarPedido(payload) {
-    const { area } = payload;
-    const valorTotal = (area * 51.4);
+    const { area, camadas } = payload;
+    const valorTotal = (area * 51.4) + camadas;
 
     // Incluir o valor total no payload antes de enviar para a API
     const pedido = {

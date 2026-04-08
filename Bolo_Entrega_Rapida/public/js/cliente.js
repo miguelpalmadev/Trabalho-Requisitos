@@ -34,10 +34,10 @@ function preencherUsuario(user) {
 function configurarCalculos() {
   const altura = document.getElementById("altura");
   const comprimento = document.getElementById("comprimento");
-
+  const camadas = document.getElementById("camadas");
   const sinal = document.getElementById("sinal");
 
-  [altura, comprimento].forEach((input) => {
+  [altura, comprimento, camadas].forEach((input) => {
     input.addEventListener("input", calcularValores);
   });
 
@@ -50,7 +50,8 @@ function calcularValores() {
 
 
   const area = altura * comprimento;
-  const total = area * PRECO_METRO;
+  const camadas = parseInt(document.getElementById("camadas").value) || 0;
+  const total = (area * PRECO_METRO) + camadas;
   const sinalMinimo = total * 0.5;
 
   document.getElementById("area").value = area > 0 ? `${area.toFixed(2)} m²` : "";
@@ -84,7 +85,8 @@ function validarSinalMinimo() {
   const msg = document.getElementById("pedidoMensagem");
 
   const area = altura * comprimento;
-  const valorTotal = area * PRECO_METRO;
+  const camadas = parseInt(document.getElementById("camadas").value) || 0;
+  const valorTotal = (area * PRECO_METRO) + camadas;
   const sinalMinimo = valorTotal * 0.5;
   const sinalInformado = parseFloat(sinalInput.value) || 0;
 
@@ -118,20 +120,21 @@ function configurarPedido() {
     const dataEntrega = document.getElementById("dataEntrega").value;
     const altura = parseFloat(document.getElementById("altura").value) || 0;
     const comprimento = parseFloat(document.getElementById("comprimento").value) || 0;
+    const camadas = parseInt(document.getElementById("camadas").value) || 0;
 
     const formato = document.getElementById("formato").value;
     const sabor = document.getElementById("sabor").value;
     const recheio = document.getElementById("recheio").value;
     const sinal = parseFloat(document.getElementById("sinal").value) || 0;
 
-    if (!dataEntrega || !altura || !comprimento || !formato || !sabor || !recheio || !sinal) {
+    if (!dataEntrega || !altura || !comprimento || !formato || !sabor || !recheio || !sinal || !camadas) {
       msg.style.color = "#c0392b";
       msg.textContent = "Preencha todos os campos do pedido.";
       return;
     }
 
     const area = altura * comprimento;
-    const valorTotal = area * PRECO_METRO;
+    const valorTotal = (area * PRECO_METRO) + camadas;
     const sinalMinimo = valorTotal * 0.5;
 
     if (sinal < sinalMinimo) {
@@ -156,6 +159,7 @@ function configurarPedido() {
         comprimento,
         area,
         formato,
+        camadas,
         sabor,
         recheio,
         sinal,
@@ -193,7 +197,7 @@ async function renderMeusPedidos() {
     if (!pedidos.length) {
       tbody.innerHTML = `
         <tr>
-          <td colspan="10">Nenhum pedido encontrado.</td>
+          <td colspan="11">Nenhum pedido encontrado.</td>
         </tr>
       `;
       return;
@@ -209,6 +213,7 @@ async function renderMeusPedidos() {
             <td>#${index + 1}</td>
             <td>${formatDateBR(pedido.dataEntrega)}</td>
             <td>${pedido.area.toFixed(2)} m²</td>
+            <td>${pedido.camadas}</td>
 
             <td>${pedido.formato}</td>
             <td>${pedido.sabor}</td>
@@ -233,7 +238,7 @@ async function renderMeusPedidos() {
   } catch (error) {
     tbody.innerHTML = `
       <tr>
-        <td colspan="10">Erro ao carregar pedidos.</td>
+        <td colspan="11">Erro ao carregar pedidos.</td>
       </tr>
     `;
   }
@@ -261,6 +266,7 @@ function renderRecibo(pedido) {
       <li><strong>Altura:</strong> ${pedido.altura} m</li>
       <li><strong>Comprimento:</strong> ${pedido.comprimento} m</li>
       <li><strong>Área do bolo:</strong> ${pedido.area.toFixed(2)} m²</li>
+      <li><strong>Camadas:</strong> ${pedido.camadas}</li>
 
       <li><strong>Formato:</strong> ${pedido.formato}</li>
       <li><strong>Sabor da massa:</strong> ${pedido.sabor}</li>
