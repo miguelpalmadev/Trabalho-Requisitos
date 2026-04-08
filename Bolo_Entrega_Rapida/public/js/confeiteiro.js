@@ -62,10 +62,11 @@ function renderPedidos() {
         <td>#${index + 1}</td>
         <td>${pedido.cliente}</td>
         <td>${pedido.area.toFixed(2)} m²</td>
-        <td>${pedido.camadas}</td>
+        
 
         <td>${pedido.formato}</td>
         <td>${pedido.sabor}</td>
+        <td>${pedido.camadas}</td>
         <td>${pedido.recheio}</td>
         <td>${formatMoney(pedido.sinal)}</td>
         <td>${formatMoney(pedido.valorTotal)}</td>
