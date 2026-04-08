@@ -196,10 +196,11 @@ function renderReciboConfeiteiro(pedido) {
       <li><strong>Altura:</strong> ${pedido.altura} m</li>
       <li><strong>Comprimento:</strong> ${pedido.comprimento} m</li>
       <li><strong>Área do bolo:</strong> ${pedido.area.toFixed(2)} m²</li>
-      <li><strong>Camadas:</strong> ${pedido.camadas}</li>
+
 
       <li><strong>Formato:</strong> ${pedido.formato}</li>
       <li><strong>Sabor da massa:</strong> ${pedido.sabor}</li>
+      <li><strong>Camadas:</strong> ${pedido.camadas}</li>
       <li><strong>Recheio:</strong> ${pedido.recheio}</li>
       <li><strong>Valor total do bolo:</strong> ${formatMoney(pedido.valorTotal)}</li>
       <li><strong>Valor do sinal pago:</strong> ${formatMoney(pedido.sinal)}</li>

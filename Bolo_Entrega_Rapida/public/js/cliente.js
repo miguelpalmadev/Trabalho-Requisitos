@@ -120,10 +120,11 @@ function configurarPedido() {
     const dataEntrega = document.getElementById("dataEntrega").value;
     const altura = parseFloat(document.getElementById("altura").value) || 0;
     const comprimento = parseFloat(document.getElementById("comprimento").value) || 0;
-    const camadas = parseInt(document.getElementById("camadas").value) || 0;
+   
 
     const formato = document.getElementById("formato").value;
     const sabor = document.getElementById("sabor").value;
+     const camadas = parseInt(document.getElementById("camadas").value) || 0;
     const recheio = document.getElementById("recheio").value;
     const sinal = parseFloat(document.getElementById("sinal").value) || 0;
 
@@ -213,10 +214,11 @@ async function renderMeusPedidos() {
             <td>#${index + 1}</td>
             <td>${formatDateBR(pedido.dataEntrega)}</td>
             <td>${pedido.area.toFixed(2)} m²</td>
-            <td>${pedido.camadas}</td>
+           
 
             <td>${pedido.formato}</td>
             <td>${pedido.sabor}</td>
+             <td>${pedido.camadas}</td>
             <td>${pedido.recheio}</td>
             <td>${formatMoney(pedido.sinal)}</td>
             <td>${formatMoney(pedido.valorTotal)}</td>
